@@ -2,6 +2,7 @@ import sqlite3, argparse, os
 from sqlite3 import Error
 from file_manager import create_dir, create_db_file
 from terminal_formatter import print_crit, print_warn, print_norm
+from db_init import db_setup
 
 print_norm("")
 print_norm("Starting budgeter...")
@@ -35,7 +36,13 @@ def init():
 
 def parse_args():
     parser = argparse.ArgumentParser(description = "Allows some command-line arguments")
-    parser.add_argument("init", help = "Resets the database to default.")
+    subparsers = parser.add_subparsers()
+
+    parser_init = subparsers.add_parser('init')
+    parser_init.set_defaults(func=db_setup)
+
+    args = parser.parse_args('init'.split())
+    args.func()
 
 if __name__ == "__main__":
     init()
