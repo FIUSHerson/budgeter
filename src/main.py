@@ -1,17 +1,20 @@
-import sqlite3
+import sqlite3, argparse, os
 from sqlite3 import Error
-from file_manager import *
+from file_manager import create_dir, create_db_file
+from terminal_formatter import print_crit, print_warn, print_norm
 
-print("Starting budgeter...")
+print_norm("")
+print_norm("Starting budgeter...")
+print_norm("")
 
 def create_connection(db_file):
-    """ create a database connection to a SQLite database """
+    # Create a database connection to a SQLite database
     conn = None
     try:
         conn = sqlite3.connect(db_file)
-        print(sqlite3.version)
+        print_norm("Connected using sqlite3 v" + sqlite3.version)
     except Error as e:
-        print(e)
+        print_crit(e)
     finally:
         if conn:
             conn.close()
@@ -23,12 +26,17 @@ def init():
     access_rights = 0o755
 
     # Create neccessary files
-    print("Creating files if they don't exist...")
+    print_norm("Creating files if they don't exist...")
     create_dir(folder_path, access_rights)
     create_db_file(file_path, access_rights)
 
     # Connect to database
     create_connection(file_path)
 
+def parse_args():
+    parser = argparse.ArgumentParser(description = "Allows some command-line arguments")
+    parser.add_argument("init", help = "Resets the database to default.")
+
 if __name__ == "__main__":
     init()
+    parse_args()
